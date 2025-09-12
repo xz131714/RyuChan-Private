@@ -38,8 +38,8 @@ const bannerSubtitle = pageConfig?.subtitle || "";
 <html
   lang={SITE_LANGUAGE}
   style="background-color: var(--custom-page-bg)"
-  data-theme={SITE_THEME.light}
-  data-theme-type="light"
+  data-theme={SITE_THEME.dark}
+  data-theme-type="dark"
 >
   <head>
     <ClientRouter />
@@ -90,7 +90,7 @@ const bannerSubtitle = pageConfig?.subtitle || "";
         if (storedTheme) {
           theme = storedTheme;
         } else {
-          theme = prefersDark ? SITE_THEME.dark : SITE_THEME.light;
+          theme = SITE_THEME.dark;
           localStorage.setItem("theme", theme);
         }
         document.documentElement.setAttribute("data-theme", theme);

@@ -32,8 +32,7 @@ if (currentPath === "/") {
   // 其它页面如 /anime、/friend、/project、/navigation 等
   pageKey = currentPath.replace(/^\//, "");
 }
-console.log("Banner pageKey:", pageKey);
-console.log("Banner pageConfig:", SITE_PAGES?.[pageKey]);
+
 const cleanPageKey = pageKey.replace(/\/$/, "");
 const pageConfig =
   SITE_PAGES[cleanPageKey] ?? SITE_PAGES[pageKey] ?? SITE_PAGES["home"];
