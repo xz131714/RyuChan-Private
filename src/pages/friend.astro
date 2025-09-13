@@ -9,14 +9,12 @@ import Card from "@/components/temple/Card.astro";
 import CardGroup from "@/components/temple/CardGroup.astro";
 import Showcase from "@/components/mdx/Showcase.astro";
 
-const sites = [{ name: "Ryuchan Demo", url: "https://ryuchan.saroprock.com/" }];
+const sites = [{ name: "Ryuchan Demo", url: "https://demo.131714.xyz/" }];
 ---
 
 <BaseLayout title="Friends">
   <CardGroup cols="1">
-    <MainCard
-      infoIcon="lucide:link"
-    >
+    <MainCard infoIcon="lucide:link">
       <div class="space-y-10">
         <!-- Friends Section -->
         <section>
@@ -72,9 +70,14 @@ const sites = [{ name: "Ryuchan Demo", url: "https://ryuchan.saroprock.com/" }];
       <div class="p-4 sm:p-6">
         <div class="space-y-10">
           <section>
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2"
+            >
               <h2 class="text-2xl font-bold flex items-center gap-2">
-                <Icon name="lucide:layout-template" class="w-6 h-6 text-primary" />
+                <Icon
+                  name="lucide:layout-template"
+                  class="w-6 h-6 text-primary"
+                />
                 <span>Sites Using Ryuchan</span>
               </h2>
               <a
@@ -88,11 +91,16 @@ const sites = [{ name: "Ryuchan Demo", url: "https://ryuchan.saroprock.com/" }];
               </a>
             </div>
             <p class="text-base-content/70 mb-6">
-              Here is a list of sites built with Ryuchan. Want to get your site listed? Click the "Add Your Site" button
-              in the top right to edit this page by submitting a Pull Request!
+              Here is a list of sites built with Ryuchan. Want to get your site
+              listed? Click the "Add Your Site" button in the top right to edit
+              this page by submitting a Pull Request!
             </p>
             <div class="flex flex-wrap items-center gap-3">
-              {sites.map((site) => <Showcase name={site.name} url={site.url} />)}
+              {
+                sites.map((site) => (
+                  <Showcase name={site.name} url={site.url} />
+                ))
+              }
             </div>
           </section>
         </div>
