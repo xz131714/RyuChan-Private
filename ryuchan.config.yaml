@@ -14,6 +14,8 @@ site:
     pageSize: 8 # 每页显示的文章数量
   banner:  
     images:  
+      - "https://picbed.xiaozhangya.xin/blog/random/rd09.webp"
+      - "https://picbed.xiaozhangya.xin/blog/random/rd10.webp"
       - "https://picbed.xiaozhangya.xin/blog/random/rd01.webp"  
       - "https://picbed.xiaozhangya.xin/blog/random/rd02.webp"  
       - "https://picbed.xiaozhangya.xin/blog/random/rd03.webp"  
