@@ -8,7 +8,71 @@ import { Icon } from "astro-icon/components";
       
 <BaseLayout title="导航">            
   <MainCard infoIcon="lucide:compass">      
-    <div class="space-y-10">      
+    <div class="space-y-10">   
+      <!-- 娱乐资源 -->    
+      <section>    
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">    
+          <Icon name="lucide:image" class="w-6 h-6 text-primary" />    
+          <span>娱乐资源</span>    
+        </h2>    
+            
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">    
+          <NavigationCard    
+            name="Wallhaven"    
+            avatar="https://picbed.xiaozhangya.xin/picbed/20250726182418838.png"    
+            description="高质量壁纸分享社区"    
+            url="https://wallhaven.cc/"    
+            category="壁纸资源"  
+            id="ENT001"  
+          /> 
+
+          <NavigationCard    
+            name="TMDB"    
+            avatar="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg"    
+            description="全球最大的电影和电视剧数据库"    
+            url="https://www.themoviedb.org/"    
+            category="影视资源"  
+            id="ENT002"  
+          /> 
+
+          <NavigationCard    
+            name="次元城"    
+            avatar="https://picbed.xiaozhangya.xin/blog/logo/cycity.png"    
+            description="追番神器"    
+            url="https://cycity.pro/"    
+            category="动漫资源"  
+            id="ENT003"  
+          /> 
+
+          <NavigationCard    
+            name="网盘资源社"    
+            avatar="https://img.xiaozhangya.xin/file/Logo/RwkDhIdV.png"    
+            description="网盘资源分享平台"    
+            url="https://www.wpzysq.com/"    
+            category="网盘资源"  
+            id="ENT004"  
+          /> 
+          
+          <NavigationCard    
+            name="WY Cloud"    
+            avatar="https://xz131714.github.io/PicBed/20250912223000250.png"    
+            description="网络代理服务"    
+            url="https://z1z1.xyz/"    
+            category="代理服务"  
+            id="ENT005"  
+          />
+              
+          <NavigationCard    
+            name="宝可梦节点"    
+            avatar="https://xz131714.github.io/PicBed/20250912222644086.png"    
+            description="网络代理服务"    
+            url="https://love.go52pokemon.com"    
+            category="代理服务"  
+            id="ENT006"  
+          />    
+        </div>    
+      </section>
+      
       <!-- 开发工具 -->      
       <section>      
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">      
@@ -163,51 +227,6 @@ import { Icon } from "astro-icon/components";
           />
         </div>    
       </section>    
-    
-      <!-- 娱乐资源 -->    
-      <section>    
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">    
-          <Icon name="lucide:image" class="w-6 h-6 text-primary" />    
-          <span>娱乐资源</span>    
-        </h2>    
-            
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">    
-          <NavigationCard    
-            name="Wallhaven"    
-            avatar="https://picbed.xiaozhangya.xin/picbed/20250726182418838.png"    
-            description="高质量壁纸分享社区"    
-            url="https://wallhaven.cc/"    
-            category="壁纸资源"  
-            id="ENT001"  
-          /> 
-          <NavigationCard    
-            name="网盘资源社"    
-            avatar="https://img.xiaozhangya.xin/file/Logo/RwkDhIdV.png"    
-            description="网盘资源分享平台"    
-            url="https://www.wpzysq.com/"    
-            category="网盘资源"  
-            id="ENT002"  
-          /> 
-          
-          <NavigationCard    
-            name="WY Cloud"    
-            avatar="https://xz131714.github.io/PicBed/20250912223000250.png"    
-            description="网络代理服务"    
-            url="https://z1z1.xyz/"    
-            category="代理服务"  
-            id="ENT003"  
-          />
-              
-          <NavigationCard    
-            name="宝可梦节点"    
-            avatar="https://xz131714.github.io/PicBed/20250912222644086.png"    
-            description="网络代理服务"    
-            url="https://love.go52pokemon.com"    
-            category="代理服务"  
-            id="ENT004"  
-          />    
-        </div>    
-      </section>
       
       <!-- Useful Resources Section -->  
       <section>  
