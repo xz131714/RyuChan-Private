@@ -14,16 +14,16 @@ site:
     pageSize: 8 # 每页显示的文章数量
   banner:  
     images:  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd09.jpg"
-      - "https://picbed.xiaozhangya.xin/blog/random/rd10.png"
-      - "https://picbed.xiaozhangya.xin/blog/random/rd01.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd02.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd03.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd04.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd05.webp"
-      - "https://picbed.xiaozhangya.xin/blog/random/rd06.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd07.webp"  
-      - "https://picbed.xiaozhangya.xin/blog/random/rd08.webp"
+      - "/banner/banner-01.jpg"
+      - "/banner/banner-02.png"
+      - "/banner/banner-03.webp"  
+      - "/banner/banner-04.webp"  
+      - "/banner/banner-05.webp"  
+      - "/banner/banner-06.webp"  
+      - "/banner/banner-07.webp"
+      - "/banner/banner-08.webp"  
+      - "/banner/banner-09.webp"  
+      - "/banner/banner-10.webp"
          
     height: "60vh"
   # Banner 页面标题配置

@@ -59,19 +59,58 @@ const hasSubtitle = displaySubtitle !== undefined && displaySubtitle !== "";
 let carouselImgsList = BANNER_IMAGES;
 const carouselAnimationTime = `${carouselImgsList.length * 6}s`;
 const bannerHeight = BANNER_HEIGHT;
+const imageCount = Math.max(carouselImgsList.length, 1);
+const hasMultipleImages = imageCount > 1;
+const visiblePercent = (100 / imageCount).toFixed(4);
+const fadeOutPercent = (100 / imageCount + 50 / imageCount).toFixed(4);
+const animationStepSeconds = imageCount > 0
+  ? Number.parseFloat(carouselAnimationTime) / imageCount
+  : 0;
+const carouselKeyframes = `
+  @keyframes carousel-animation {
+    0% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    3% {
+      opacity: 1;
+    }
+    8% {
+      opacity: 1;
+    }
+    ${visiblePercent}% {
+      opacity: 1;
+    }
+    ${fadeOutPercent}% {
+      opacity: 0;
+      transform: scale(1.35);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.35);
+    }
+  }
+`;
 ---
 
 <div id="banner" class="banner">
   <div class="banner-inner h-full w-full">
     <!-- 始终显示轮播图片 -->
-    <div class="carousel">
-      <ul id="carousel_imgs">
+    <div
+      class="carousel"
+      data-has-multiple={hasMultipleImages}
+      data-animation-step={animationStepSeconds}
+    >
+      <ul class="carousel-list">
         {
           carouselImgsList.map((img, index) => (
             <li
               class="item"
-              style={{ animationDelay: `${index * 6}s` }}
-              data-background-image={img}
+              style={{
+                "--item-delay": `${index * 6}s`,
+                "--item-image": `url(${img})`,
+              }}
+              aria-hidden="true"
             />
           ))
         }
@@ -157,125 +196,202 @@ const bannerHeight = BANNER_HEIGHT;
 <!-- 打字机效果脚本 -->
 <script define:vars={{ TYPEWRITER_TEXTS, useTypewriter }} is:inline>
   document.addEventListener("astro:page-load", () => {
-    if (!useTypewriter || !TYPEWRITER_TEXTS || TYPEWRITER_TEXTS.length === 0) {
+    if (!useTypewriter || !Array.isArray(TYPEWRITER_TEXTS) || TYPEWRITER_TEXTS.length === 0) {
       return;
     }
 
     const typewriterElement = document.getElementById("typewriter-text");
     if (!typewriterElement) return;
 
-    let currentTextIndex = 0;
-    let currentCharIndex = 0;
-    let isDeleting = false;
-    let typeSpeed = 50; // 优化：减少打字速度延迟
-    let deleteSpeed = 30; // 优化：减少删除速度延迟
-    let pauseTime = 1500; // 优化：减少暂停时间
+    typewriterElement.classList.remove("typewriter-static");
 
-    function typeWriter() {
-      const currentText = TYPEWRITER_TEXTS[currentTextIndex];
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const teardowns = new Set();
 
-      if (isDeleting) {
-        // 删除字符
-        typewriterElement.textContent = currentText.substring(
-          0,
-          currentCharIndex - 1,
-        );
-        currentCharIndex--;
+    const cleanupAll = () => {
+      teardowns.forEach((stop) => {
+        try {
+          stop();
+        } catch (error) {
+          console.error(error);
+        }
+      });
+      teardowns.clear();
+    };
 
-        if (currentCharIndex === 0) {
+    const startTypewriter = () => {
+      let timerId;
+      let currentTextIndex = 0;
+      let currentCharIndex = 0;
+      let isDeleting = false;
+
+      const TYPE_SPEED = 50;
+      const DELETE_SPEED = 30;
+      const PAUSE_TIME = 1500;
+      const NEXT_ITEM_DELAY = 300;
+
+      const schedule = (delay, cb) => {
+        timerId = window.setTimeout(cb, delay);
+      };
+
+      const stop = () => {
+        if (timerId) {
+          clearTimeout(timerId);
+          timerId = undefined;
+        }
+      };
+
+      teardowns.add(stop);
+
+      const tick = () => {
+        const currentText = TYPEWRITER_TEXTS[currentTextIndex];
+
+        if (!isDeleting) {
+          currentCharIndex = Math.min(currentCharIndex + 1, currentText.length);
+        } else {
+          currentCharIndex = Math.max(currentCharIndex - 1, 0);
+        }
+
+        typewriterElement.textContent = currentText.slice(0, currentCharIndex);
+
+        if (!isDeleting && currentCharIndex === currentText.length) {
+          isDeleting = true;
+          schedule(PAUSE_TIME, tick);
+          return;
+        }
+
+        if (isDeleting && currentCharIndex === 0) {
           isDeleting = false;
           currentTextIndex = (currentTextIndex + 1) % TYPEWRITER_TEXTS.length;
-          setTimeout(typeWriter, 300); // 优化：减少删除完成后的暂停时间
+          schedule(NEXT_ITEM_DELAY, tick);
           return;
         }
 
-        setTimeout(typeWriter, deleteSpeed);
-      } else {
-        // 添加字符
-        typewriterElement.textContent = currentText.substring(
-          0,
-          currentCharIndex + 1,
-        );
-        currentCharIndex++;
+        schedule(isDeleting ? DELETE_SPEED : TYPE_SPEED, tick);
+      };
 
-        if (currentCharIndex === currentText.length) {
-          // 当前句子完成，暂停后开始删除
-          setTimeout(() => {
-            isDeleting = true;
-            typeWriter();
-          }, pauseTime);
-          return;
-        }
+      schedule(400, tick);
+    };
 
-        setTimeout(typeWriter, typeSpeed);
-      }
+    if (prefersReducedMotion.matches) {
+      typewriterElement.textContent = TYPEWRITER_TEXTS[0];
+      typewriterElement.classList.add("typewriter-static");
+      return;
     }
 
-    // 优化：减少初始延迟时间
-    setTimeout(typeWriter, 500);
-  });
-</script>
+    typewriterElement.textContent = "";
 
-<!-- 现有的轮播图片脚本 -->
-<script>
-  document.addEventListener("astro:page-load", () => {
-    const styleElement = document.createElement("style");
-    const carouselImgs = document.getElementById("carousel_imgs");
-    const carouselImgsCount = carouselImgs?.children.length ?? 0;
-
-    if (carouselImgsCount > 0) {
-      const carouselAnimation = `    
-      @keyframes carousel-animation {    
-        0% {    
-          opacity: 0;    
-          transform: scale(1);    
-        }    
-        3% {    
-          opacity: 1;    
-        }    
-        8% {    
-          opacity: 1;    
-          animation-timing-function: ease-out;    
-        }    
-        ${100 / carouselImgsCount}% {    
-          opacity: 1;    
-        }    
-        ${100 / carouselImgsCount + 50 / carouselImgsCount}% {    
-          opacity: 0;    
-          animation-timing-function: ease-out;    
-        }    
-        100% {    
-          opacity: 0;    
-          transform: scale(2);    
-        }    
-      }    
-      `;
-      styleElement.textContent = carouselAnimation;
-      let bannerElement = document.getElementById("banner");
-      if (bannerElement && !bannerElement.querySelector("style"))
-        bannerElement.appendChild(styleElement);
-    }
-
-    // 设置背景图片
-    const items = document.querySelectorAll("#carousel_imgs .item");
-    items.forEach((item) => {
-      const bgImage = item.getAttribute("data-background-image");
-      if (bgImage) {
-        (item as HTMLElement).style.backgroundImage = `url(${bgImage})`;
-      }
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries.find((item) => item.isIntersecting);
+      if (!entry) return;
+      observer.disconnect();
+      startTypewriter();
+    }, {
+      threshold: 0.4,
+      rootMargin: "0px 0px -20% 0px",
     });
+
+    observer.observe(typewriterElement);
+    teardowns.add(() => observer.disconnect());
+
+    const handleMotionChange = (event) => {
+      if (!event.matches) {
+        return;
+      }
+      cleanupAll();
+      typewriterElement.textContent = TYPEWRITER_TEXTS[0];
+      typewriterElement.classList.add("typewriter-static");
+    };
+
+    prefersReducedMotion.addEventListener("change", handleMotionChange);
+    teardowns.add(() => prefersReducedMotion.removeEventListener("change", handleMotionChange));
+
+    document.addEventListener("astro:before-swap", cleanupAll, { once: true });
   });
 </script>
+
+<script define:vars={{ imageCount }} is:inline>
+  document.addEventListener("astro:page-load", () => {
+    if (typeof window === "undefined") return;
+    if (!Number.isFinite(imageCount) || imageCount <= 1) {
+      return;
+    }
+
+    const totalDuration = imageCount * 6;
+    if (totalDuration <= 0) return;
+
+    const bannerElement = document.getElementById("banner");
+    if (!bannerElement) return;
+
+    if (typeof window.__bannerStartTime !== "number") {
+      window.__bannerStartTime = performance.now();
+    }
+
+    const now = performance.now();
+    const elapsedSeconds = ((now - window.__bannerStartTime) / 1000) % totalDuration;
+    bannerElement.style.setProperty("--carousel-offset", `${elapsedSeconds}s`);
+  });
+</script>
+
+<!-- 随机化轮播起始顺序 -->
+<script is:inline>
+  const randomizeCarousel = () => {
+    const carousel = document.querySelector("#banner .carousel");
+    if (!carousel) return;
+
+    const animationStep = Number.parseFloat(
+      carousel.dataset.animationStep ?? "0",
+    );
+    if (!Number.isFinite(animationStep) || animationStep <= 0) {
+      return;
+    }
+
+    const items = Array.from(
+      carousel.querySelectorAll(".carousel-list .item"),
+    );
+
+    if (items.length <= 1) return;
+
+    const delays = items.map((_, index) => index * animationStep);
+
+    for (let i = delays.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = delays[i];
+      delays[i] = delays[j];
+      delays[j] = temp;
+    }
+
+    items.forEach((item, index) => {
+      item.style.setProperty("--item-delay", `${delays[index]}s`);
+    });
+  };
+
+  randomizeCarousel();
+  document.addEventListener("astro:page-load", randomizeCarousel);
+  document.addEventListener("astro:after-swap", randomizeCarousel);
+</script>
+
+{carouselKeyframes && (
+  <style is:inline set:html={carouselKeyframes}></style>
+)}
 
 <style define:vars={{ carouselAnimationTime, bannerHeight }}>
   .banner {
     @apply relative opacity-100;
+    --carousel-offset: 0s;
     height: var(--bannerHeight);
   }
 
   .carousel {
     @apply absolute left-0 top-0 -z-10 block w-full overflow-hidden bg-base-200;
     height: var(--bannerHeight);
+  }
+
+  .carousel-list {
+    @apply relative block h-full w-full;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .carousel::before {
@@ -287,8 +403,16 @@ const bannerHeight = BANNER_HEIGHT;
     @apply absolute left-0 top-0 z-0 h-full w-full origin-center bg-cover bg-center bg-no-repeat opacity-0;
     animation: carousel-animation var(--carouselAnimationTime) linear infinite
       0s;
+    animation-delay: calc(var(--item-delay, 0s) - var(--carousel-offset, 0s));
     backface-visibility: hidden;
     transform-style: preserve-3d;
+    background-image: var(--item-image);
+  }
+
+  .carousel[data-has-multiple="false"] .item {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .title {
@@ -311,6 +435,11 @@ const bannerHeight = BANNER_HEIGHT;
     content: "|";
     animation: blink 1s infinite;
     color: white;
+  }
+
+  .typewriter-static::after {
+    animation: none;
+    opacity: 0;
   }
 
   @keyframes blink {
@@ -340,6 +469,22 @@ const bannerHeight = BANNER_HEIGHT;
     }
     100% {
       transform: translate3d(85px, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel .item {
+      animation: none;
+      opacity: 0;
+      transform: none;
+    }
+
+    .carousel .item:first-child {
+      opacity: 1;
+    }
+
+    .waves > .parallax use {
+      animation: none;
     }
   }
 </style>
